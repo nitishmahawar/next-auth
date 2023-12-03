@@ -17,7 +17,7 @@ export const GET = async (req: Request) => {
     });
 
     if (!verification) {
-      return new NextResponse("Verification token not found", { status: 400 });
+      return new NextResponse("Invalid verification link", { status: 400 });
     }
 
     const user = await prisma.user.findUnique({
@@ -41,6 +41,7 @@ export const GET = async (req: Request) => {
 
     return new NextResponse("Email Verified. Please login to your account");
   } catch (error) {
+    console.log("VERIFY_EMAIL", error);
     return new NextResponse("Internal server error", { status: 500 });
   }
 };

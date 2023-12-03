@@ -68,7 +68,7 @@ const SignIn = () => {
   }, []);
 
   return (
-    <Card className="w-full max-w-md shadow-lg">
+    <Card>
       <CardHeader>
         <CardTitle>Login</CardTitle>
         <CardDescription>
@@ -101,8 +101,8 @@ const SignIn = () => {
                   <div className="flex justify-between">
                     <FormLabel>Password</FormLabel>
                     <Link
-                      className=" text-xs capitalize hover:underline font-medium"
-                      href="/"
+                      className=" text-xs capitalize text-muted-foreground hover:text-primary/90 transition-colors font-medium"
+                      href="/forgot-password"
                     >
                       Forgot password?
                     </Link>
@@ -141,7 +141,7 @@ const SignIn = () => {
             </Button>
           </form>
         </Form>
-        <div className="flex gap-4 py-6 items-center">
+        <div className="flex gap-4 py-4 items-center">
           <Separator className="flex-1" />
           <p className="uppercase text-xs text-muted-foreground font-medium">
             or continue with
@@ -160,7 +160,7 @@ const SignIn = () => {
               height={20}
               width={20}
               src="/google.svg"
-              className="h-5 w-5 mr-4"
+              className="h-4 w-4 mr-2"
               alt="logo"
             />
             Google
@@ -170,15 +170,15 @@ const SignIn = () => {
             variant="outline"
             onClick={() => signIn("github")}
           >
-            <Github size={20} className="mr-4" /> Github
+            <Github size={16} className="mr-2" /> Github
           </Button>
         </div>
-        <Link
-          className="block text-center hover:underline mt-4"
-          href="/register"
-        >
-          Don't have an account?
-        </Link>
+        <div className="text-sm text-gray-600 dark:text-gray-400 pt-4">
+          Don&apos;t have an account ?{" "}
+          <Link className="text-primary font-medium" href="/register">
+            Register
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );

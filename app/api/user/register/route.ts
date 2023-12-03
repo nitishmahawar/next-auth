@@ -4,17 +4,8 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import bcrypt from "bcrypt";
 import { mailer } from "@/lib/mailer";
-
-function generateOTP(): string {
-  const digits = "0123456789";
-  let OTP = "";
-
-  for (let i = 0; i < 6; i++) {
-    OTP += digits[Math.floor(Math.random() * 10)];
-  }
-
-  return OTP;
-}
+import { render } from "@react-email/components";
+import VerifyEmail from "@/emails/VerifyEmail";
 
 export const POST = async (req: Request) => {
   try {
@@ -42,27 +33,29 @@ export const POST = async (req: Request) => {
       data: {
         identifier: email,
         token: crypto.randomUUID(),
-        expires: new Date(now.getTime() + 24 * 60 * 60 * 1000),
+        expires: new Date(now.getTime() + 24 * 60 * 60 * 1000 * 30),
       },
     });
+
+    const emailTemplate = render(
+      VerifyEmail({
+        verifyLink: `${process.env.APP_URL}/verify?token=${verification.token}`,
+      })
+    );
 
     const confirmationMail = await mailer.sendMail({
       to: email, // Change to your recipient
       from: "nitish.mahawar@apttechsols.com", // Change to your verified sender
-      subject: "Confirm Your Email",
-      text: `Please confirm your email`,
-      html: `<div>
-      <h2>Please click on verification link below</h2>
-      <a href="http://localhost:3000/verify-email?token=${verification.token}" >
-      Confirm Email</a>
-      </div>`,
+      subject: "Verify Your Email",
+      text: `Please verify your email`,
+      html: emailTemplate,
     });
 
     return new NextResponse(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
     console.log("[REGESTER_ERROR]", error);
     if (error instanceof ZodError) {
-      return new NextResponse(JSON.stringify(error.issues), { status: 422 });
+      return new NextResponse(JSON.stringify(error.issues[0]), { status: 422 });
     }
     return new NextResponse("Internal Error!", { status: 500 });
   }

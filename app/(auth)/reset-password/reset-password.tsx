@@ -24,8 +24,8 @@ import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { resetPassword } from "@/lib/actions";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 interface ResetPasswordProps {
   token: string;
@@ -54,7 +54,10 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
 
   const { isPending, mutate } = useMutation({
     mutationFn: async (password: string) => {
-      const data = await resetPassword({ password, token });
+      const data = await axios.post("/api/user/reset-password", {
+        password,
+        token,
+      });
       return data;
     },
     onSuccess(data, variables, context) {

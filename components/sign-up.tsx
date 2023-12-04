@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { Eye, EyeOff, Github } from "lucide-react";
+import { Eye, EyeOff, Github, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { registerSchema } from "@/lib/validators/register";
 import { useMutation } from "@tanstack/react-query";
@@ -52,8 +52,8 @@ const SignUp = () => {
       return data;
     },
     onSuccess(data, variables, context) {
-      // router.push(`/verify?email=${variables.email}`);
       toast.success("A verification link is sent to your email");
+      form.reset();
     },
     onError(error: any, variables, context) {
       toast.error(error?.response?.data ?? "Something went wrong!");
@@ -136,7 +136,11 @@ const SignUp = () => {
               )}
             />
             <Button className="w-full mt-6" type="submit" disabled={isPending}>
-              {isPending ? <Loader /> : "Create New Account"}
+              {isPending ? (
+                <Loader2 size={20} className="animate-spin" />
+              ) : (
+                "Create New Account"
+              )}
             </Button>
           </form>
         </Form>

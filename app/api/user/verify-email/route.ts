@@ -7,7 +7,9 @@ export const GET = async (req: Request) => {
     const token = searchParams.get("token");
 
     if (!token) {
-      return new NextResponse("Verification token is required");
+      return new NextResponse("Verification token is required", {
+        status: 400,
+      });
     }
 
     const verification = await prisma.verificationToken.findUnique({
@@ -29,7 +31,7 @@ export const GET = async (req: Request) => {
     }
 
     if (user.emailVerified) {
-      return new NextResponse("Email already verified!");
+      return new NextResponse("Email already verified!", { status: 400 });
     }
 
     await prisma.user.update({

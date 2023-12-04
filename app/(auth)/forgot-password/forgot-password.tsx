@@ -16,7 +16,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { sendResetPasswordLink } from "@/lib/actions";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -42,7 +41,7 @@ const ForgotPassword = () => {
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: async (email: string) => {
-      const data = await sendResetPasswordLink(email);
+      const data = await axios.post("/api/user/reset-link", { email });
       return data;
     },
     onSuccess(data, variables, context) {

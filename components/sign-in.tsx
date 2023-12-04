@@ -23,7 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { Eye, EyeOff, Github } from "lucide-react";
+import { Eye, EyeOff, Github, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { loginSchema } from "@/lib/validators/login";
 import { signIn } from "next-auth/react";
@@ -134,7 +134,7 @@ const SignIn = () => {
             />
             <Button className="w-full mt-6" type="submit" disabled={isLoading}>
               {isLoading ? (
-                <l-ring color="white" size={20} stroke={2}></l-ring>
+                <Loader2 size={20} className="animate-spin" />
               ) : (
                 "Login"
               )}

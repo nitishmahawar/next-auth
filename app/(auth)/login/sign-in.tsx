@@ -1,10 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -18,58 +17,55 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { Eye, EyeOff, Github, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { registerSchema } from "@/lib/validators/register";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { loginSchema } from "@/lib/validators/login";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
-import Loader from "./spinner";
 import { useRouter } from "next/navigation";
 
-const SignUp = () => {
+const SignIn = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const form = useForm<z.infer<typeof registerSchema>>({
+  const form = useForm<z.infer<typeof loginSchema>>({
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(loginSchema),
   });
 
   const router = useRouter();
+  const [isGoogleClicked, setIsGoogleClicked] = useState(false);
+  const [isGithubClicked, setIsGithubClicked] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const isDisabled = isLoading || isGoogleClicked || isGithubClicked;
 
-  const { mutate: register, isPending } = useMutation({
-    mutationFn: async (values: z.infer<typeof registerSchema>) => {
-      const { data } = await axios.post("/api/user/register", values);
-      return data;
-    },
-    onSuccess(data, variables, context) {
-      toast.success("A verification link is sent to your email");
-      form.reset();
-    },
-    onError(error: any, variables, context) {
-      toast.error(error?.response?.data ?? "Something went wrong!");
-    },
-  });
-
-  const onSubmit = (values: z.infer<typeof registerSchema>) => {
-    register(values);
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setIsLoading(true);
+    const res = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+      callbackUrl: "/",
+    });
+    setIsLoading(false);
+    if (!res?.ok) {
+      toast.error(res?.error);
+    }
+    router.refresh();
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create new account</CardTitle>
+        <CardTitle>Login</CardTitle>
         <CardDescription>
-          Enter your details below to create new account
+          Enter your email and password below to login your account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -77,24 +73,10 @@ const SignUp = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="">
             <FormField
               control={form.control}
-              name="name"
-              disabled={isPending}
+              name="email"
+              disabled={isLoading}
               render={({ field }) => (
                 <FormItem className="space-y-1">
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              disabled={isPending}
-              render={({ field }) => (
-                <FormItem className="space-y-1 mt-4">
                   <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input placeholder="example@gmail.com" {...field} />
@@ -106,10 +88,18 @@ const SignUp = () => {
             <FormField
               control={form.control}
               name="password"
-              disabled={isPending}
+              disabled={isLoading}
               render={({ field }) => (
                 <FormItem className="space-y-1 mt-4">
-                  <FormLabel>Password</FormLabel>
+                  <div className="flex justify-between">
+                    <FormLabel>Password</FormLabel>
+                    <Link
+                      className=" text-xs capitalize text-muted-foreground hover:text-primary/90 transition-colors font-medium"
+                      href="/forgot-password"
+                    >
+                      Forgot password?
+                    </Link>
+                  </div>
 
                   <div className="relative">
                     <FormControl>
@@ -135,11 +125,11 @@ const SignUp = () => {
                 </FormItem>
               )}
             />
-            <Button className="w-full mt-6" type="submit" disabled={isPending}>
-              {isPending ? (
+            <Button className="w-full mt-6" type="submit" disabled={isDisabled}>
+              {isLoading ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
-                "Create New Account"
+                "Login"
               )}
             </Button>
           </form>
@@ -154,24 +144,49 @@ const SignUp = () => {
         </div>
 
         <div className="flex gap-4">
-          <Button className="flex-1" variant="outline">
-            <Image
-              height={20}
-              width={20}
-              src="/google.svg"
-              className="h-4 w-4 mr-2"
-              alt="logo"
-            />
+          <Button
+            className="flex-1"
+            variant="outline"
+            disabled={isDisabled}
+            onClick={() => {
+              setIsGoogleClicked(true);
+              signIn("google");
+            }}
+          >
+            {isGoogleClicked ? (
+              <Loader2 size={16} className="mr-2 animate-spin" />
+            ) : (
+              <Image
+                height={20}
+                width={20}
+                src="/google.svg"
+                className="h-4 w-4 mr-2"
+                alt="logo"
+              />
+            )}
             Google
           </Button>
-          <Button className="flex-1" variant="outline">
-            <Github size={16} className="mr-2" /> Github
+          <Button
+            className="flex-1"
+            variant="outline"
+            disabled={isDisabled}
+            onClick={() => {
+              setIsGithubClicked(true);
+              signIn("github");
+            }}
+          >
+            {isGithubClicked ? (
+              <Loader2 size={16} className="mr-2 animate-spin" />
+            ) : (
+              <Github size={16} className="mr-2" />
+            )}
+            Github
           </Button>
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400 pt-4">
-          Already have an account ?{" "}
-          <Link className="text-primary font-medium" href="/login">
-            Login
+          Don&apos;t have an account ?{" "}
+          <Link className="text-primary font-medium" href="/register">
+            Register
           </Link>
         </div>
       </CardContent>
@@ -179,4 +194,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

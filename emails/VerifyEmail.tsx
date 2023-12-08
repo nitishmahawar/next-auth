@@ -28,7 +28,7 @@ export const VerifyEmail = ({
   return (
     <Html>
       <Head />
-      <Preview>Verify Your AiraChat Account</Preview>
+      <Preview>Verify Your Auth Account</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* <Img
@@ -42,8 +42,8 @@ export const VerifyEmail = ({
           </Heading>
           <Section>
             <Text style={text}>
-              This is the verification email for your AiraChat account. To
-              verify your account please click on button below.
+              This is the verification email for your Auth account. To verify
+              your account please click on button below.
             </Text>
             <Button style={button} href={verifyLink}>
               Verify Email

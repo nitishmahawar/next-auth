@@ -27,19 +27,31 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
-interface ResetPasswordProps {
-  token: string;
-}
+const passwordValidation = z
+  .string()
+  .min(8, { message: "Password should be at least 8 characters long" })
+  .max(16, { message: "Password should not exceed 16 characters" })
+  .regex(
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,16}$/,
+    {
+      message:
+        "Password must contain at least 1 uppercase letter, 1 number, and 1 special character",
+    }
+  );
 
 const formSchema = z
   .object({
-    password: z.string().min(8).max(20),
-    confirmPassword: z.string().min(8).max(20),
+    password: passwordValidation,
+    confirmPassword: passwordValidation,
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+interface ResetPasswordProps {
+  token: string;
+}
 
 const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -75,7 +87,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   };
 
   return (
-    <Card className="">
+    <Card>
       <CardHeader>
         <CardTitle>Reset Your Password</CardTitle>
         <CardDescription>

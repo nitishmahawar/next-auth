@@ -10,6 +10,7 @@ import {
   Preview,
   Section,
   Text,
+  Tailwind,
 } from "@react-email/components";
 import * as React from "react";
 
@@ -17,18 +18,13 @@ interface ResetPasswordEmailProps {
   resetPasswordLink?: string;
 }
 
-const baseUrl =
-  process.env.NODE_ENV == "production"
-    ? "https://airachat.com"
-    : "http://localhost:3000";
-
 export const ResetPasswordEmail = ({
   resetPasswordLink = "https://airachat.com",
 }: ResetPasswordEmailProps) => {
   return (
     <Html>
       <Head />
-      <Preview>AiraChat reset your password</Preview>
+      <Preview>Auth reset your password</Preview>
       <Body style={main}>
         <Container style={container}>
           {/* <Img
@@ -42,7 +38,7 @@ export const ResetPasswordEmail = ({
           </Heading>
           <Section>
             <Text style={text}>
-              Someone recently requested a password change for your AiraChat
+              Someone recently requested a password change for your Auth
               account. If this was you, you can set a new password here:
             </Text>
             <Button style={button} href={resetPasswordLink}>

@@ -33,7 +33,7 @@ export const POST = async (req: Request) => {
     });
     const emailTemplate = render(
       ResetPasswordEmail({
-        resetPasswordLink: `${process.env.APP_URL}/verify?token=${resetToken.token}`,
+        resetPasswordLink: `${process.env.APP_URL}/reset-password?token=${resetToken.token}`,
       })
     );
 

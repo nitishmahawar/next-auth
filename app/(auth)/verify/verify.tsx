@@ -1,9 +1,9 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { FC, useEffect } from "react";
+import React, { FC } from "react";
 import { toast } from "sonner";
 
 interface VerifyProps {

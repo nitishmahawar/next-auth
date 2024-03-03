@@ -67,8 +67,11 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    setIsGithubClicked(false);
-    setIsGoogleClicked(false);
+    // when leave page, reset state
+    return () => {
+      setIsGoogleClicked(false);
+      setIsGithubClicked(false);
+    };
   }, []);
 
   return (

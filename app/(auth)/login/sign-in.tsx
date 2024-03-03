@@ -28,11 +28,9 @@ import { loginSchema } from "@/lib/validators/login";
 import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useUrlChanged } from "@/hooks/use-url-changed";
 
 const SignIn = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const url = useUrlChanged();
   const form = useForm<z.infer<typeof loginSchema>>({
     defaultValues: {
       email: "",
@@ -63,10 +61,12 @@ const SignIn = () => {
   };
 
   useEffect(() => {
-    console.log("URL CHANGED");
-    setIsGithubClicked(false);
-    setIsGoogleClicked(false);
-  }, [url]);
+    // when leave page, reset state
+    return () => {
+      setIsGoogleClicked(false);
+      setIsGithubClicked(false);
+    };
+  }, []);
 
   return (
     <Card>

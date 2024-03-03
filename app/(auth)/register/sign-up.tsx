@@ -66,6 +66,11 @@ const SignUp = () => {
     register(values);
   };
 
+  useEffect(() => {
+    setIsGithubClicked(true);
+    setIsGoogleClicked(false);
+  }, []);
+
   return (
     <Card>
       <CardHeader>

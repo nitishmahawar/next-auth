@@ -48,7 +48,11 @@ export const authOptions: AuthOptions = {
         }
 
         if (!user.hashedPassword) {
-          throw new Error("Account was created using social Id!");
+          throw new Error("User was created using social Id!");
+        }
+
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email first!");
         }
 
         const isAuth = await bcrypt.compare(

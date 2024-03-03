@@ -24,7 +24,7 @@ export const POST = async (req: Request) => {
 
     const now = new Date();
 
-    const resetToken = await prisma.verificationToken.create({
+    const resetToken = await prisma.resetPasswordToken.create({
       data: {
         expires: new Date(now.getTime() + 24 * 60 * 60 * 1000),
         identifier: email,

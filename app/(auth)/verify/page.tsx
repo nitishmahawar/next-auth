@@ -2,6 +2,10 @@ import { redirect } from "next/navigation";
 import React from "react";
 import Verify from "./verify";
 
+export const metadata = {
+  title: "Verify Email",
+};
+
 const Page = ({
   searchParams: { token },
 }: {

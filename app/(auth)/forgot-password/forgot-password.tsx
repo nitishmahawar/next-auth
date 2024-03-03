@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -41,8 +41,16 @@ const ForgotPassword = () => {
   const router = useRouter();
   const { mutate, isPending } = useMutation({
     mutationFn: async (email: string) => {
-      const data = await axios.post("/api/user/reset-link", { email });
-      return data;
+      try {
+        const data = await axios.post("/api/user/reset-link", { email });
+        return data;
+      } catch (error) {
+        console.log(error);
+        if (error instanceof AxiosError) {
+          throw new Error(error.response?.data ?? "Something went wrong");
+        }
+        throw new Error("Something went wrong");
+      }
     },
     onSuccess(data, variables, context) {
       form.reset();
@@ -50,7 +58,7 @@ const ForgotPassword = () => {
       router.push("/login");
     },
     onError(error, variables, context) {
-      toast.error(error.message ?? "Something went wrong");
+      toast.error(error.message);
     },
   });
 

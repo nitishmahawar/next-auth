@@ -43,7 +43,7 @@ export const POST = async (req: Request) => {
       })
     );
 
-    const confirmationMail = await mailer.sendMail({
+    await mailer.sendMail({
       to: email, // Change to your recipient
       from: "nitish.mahawar@apttechsols.com", // Change to your verified sender
       subject: "Verify Your Email",
@@ -53,9 +53,9 @@ export const POST = async (req: Request) => {
 
     return new NextResponse(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
-    console.log("[REGESTER_ERROR]", error);
+    console.log("[REGISTER_ERROR]", error);
     if (error instanceof ZodError) {
-      return new NextResponse(JSON.stringify(error.issues[0]), { status: 422 });
+      return new NextResponse("Invalid email or password", { status: 422 });
     }
     return new NextResponse("Internal Error!", { status: 500 });
   }

@@ -77,8 +77,8 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
       form.reset();
       router.push("/login");
     },
-    onError(error, variables, context) {
-      toast.error(error.message ?? "Something went wrong");
+    onError(error: any, variables, context) {
+      toast.error(error?.response?.data ?? "Something went wrong");
     },
   });
 

@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { isExpired } from "@/lib/utils";
 
 export const POST = async (req: Request) => {
   try {
@@ -16,12 +17,16 @@ export const POST = async (req: Request) => {
       return new NextResponse("Password is required!", { status: 400 });
     }
 
-    const resetToken = await prisma.verificationToken.findUnique({
+    const resetToken = await prisma.resetPasswordToken.findUnique({
       where: { token },
     });
 
     if (!resetToken) {
       return new NextResponse("Invalid verification link", { status: 400 });
+    }
+
+    if (isExpired(resetToken.expires)) {
+      return new NextResponse("Verification link is expired!", { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);

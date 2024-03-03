@@ -67,7 +67,7 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    setIsGithubClicked(true);
+    setIsGithubClicked(false);
     setIsGoogleClicked(false);
   }, []);
 
